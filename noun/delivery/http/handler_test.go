@@ -1,4 +1,4 @@
-package server
+package http
 
 import (
 	"bytes"
@@ -10,56 +10,65 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/PhilWhittingham/vocab-helper-de/models"
+	"github.com/PhilWhittingham/vocab-helper-de/noun/service"
 )
 
-func SetUpRouter() *gin.Engine {
-	router := gin.Default()
-	return router
-}
-
 func TestGetNouns(t *testing.T) {
-	r := SetUpRouter()
-	r.GET("/nouns", getNouns)
+	router := gin.Default()
 
-	req, _ := http.NewRequest("GET", "/nouns", nil)
+	s := new(service.NounServiceMock)
+
+	group := router.Group("/api")
+	RegisterHTTPEndpoints(group, s)
+
+	req, _ := http.NewRequest("GET", "/api/nouns", nil)
 
 	w := httptest.NewRecorder()
-	r.ServeHTTP(w, req)
+	router.ServeHTTP(w, req)
+
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func TestPostNouns(t *testing.T) {
 
 	t.Run("With correctly formatted input returns success code", func(t *testing.T) {
-		r := SetUpRouter()
-		r.POST("/nouns", postNouns)
+		router := gin.Default()
 
-		newNoun := models.Noun{
+		service := new(service.NounServiceMock)
+
+		group := router.Group("/api")
+		RegisterHTTPEndpoints(group, service)
+
+		newNoun := Noun{
 			Article:     "Das",
 			Word:        "word",
 			Translation: "translation",
 		}
 		jsonValue, _ := json.Marshal(newNoun)
-		req, _ := http.NewRequest("POST", "/nouns", bytes.NewBuffer(jsonValue))
+		req, _ := http.NewRequest("POST", "/api/nouns", bytes.NewBuffer(jsonValue))
 
 		w := httptest.NewRecorder()
-		r.ServeHTTP(w, req)
+		router.ServeHTTP(w, req)
+
 		assert.Equal(t, http.StatusCreated, w.Code)
 	})
 
 	t.Run("With incorrectly formatted input returns failure code", func(t *testing.T) {
-		r := SetUpRouter()
-		r.POST("/nouns", postNouns)
+		router := gin.Default()
+
+		service := new(service.NounServiceMock)
+
+		group := router.Group("/api")
+		RegisterHTTPEndpoints(group, service)
 
 		badBody := []byte(`{
 			"any_key": "any_value"
 		}`)
 
-		req, _ := http.NewRequest("POST", "/nouns", bytes.NewBuffer(badBody))
+		req, _ := http.NewRequest("POST", "/api/nouns", bytes.NewBuffer(badBody))
 
 		w := httptest.NewRecorder()
-		r.ServeHTTP(w, req)
+		router.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 }

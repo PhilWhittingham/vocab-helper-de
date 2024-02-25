@@ -1,37 +1,43 @@
 package server
 
 import (
-	"net/http"
+	"context"
+	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"github.com/PhilWhittingham/vocab-helper-de/models"
+	nounHttp "github.com/PhilWhittingham/vocab-helper-de/noun/delivery/http"
+	nounMongo "github.com/PhilWhittingham/vocab-helper-de/noun/repository/mongo"
+	"github.com/PhilWhittingham/vocab-helper-de/noun/service"
 )
 
-var nouns = []models.Noun{
-	{Article: "Das", Word: "Meeting", Translation: "Meeting"},
-}
-
-func getNouns(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, nouns)
-}
-
-func postNouns(c *gin.Context) {
-	var newNoun models.Noun
-
-	if err := c.BindJSON(&newNoun); err != nil {
-		c.AbortWithStatus(http.StatusBadRequest)
-		return
+func initDB() *mongo.Database {
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(viper.GetString("MONGO_URI")))
+	if err != nil {
+		log.Fatalf("Error occured while establishing connection to mongoDB")
 	}
 
-	nouns = append(nouns, newNoun)
-	c.IndentedJSON(http.StatusCreated, newNoun)
+	err = client.Ping(context.Background(), nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return client.Database(viper.GetString("MONGO_DB_NAME"))
 }
 
 func Run(port string) {
 	router := gin.Default()
-	router.GET("/nouns", getNouns)
-	router.POST("/nouns", postNouns)
+
+	db := initDB()
+	nr := nounMongo.NewNounRepository(db, viper.GetString("MONGO_COLLECTION_NAME_NOUNS"))
+	s := service.NewNounService(nr)
+
+	group := router.Group("/api")
+
+	nounHttp.RegisterHTTPEndpoints(group, s)
 
 	router.Run("localhost:" + port)
 }

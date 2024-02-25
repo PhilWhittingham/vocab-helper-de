@@ -6,6 +6,6 @@ import (
 	"github.com/PhilWhittingham/vocab-helper-de/models"
 )
 
-type UseCase interface {
+type Service interface {
 	GetNouns(ctx context.Context) ([]*models.Noun, error)
 }

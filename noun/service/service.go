@@ -11,7 +11,7 @@ type NounService struct {
 	nounRepo noun.Repository
 }
 
-func NewNounservice(nounRepo noun.Repository) *NounService {
+func NewNounService(nounRepo noun.Repository) *NounService {
 	return &NounService{
 		nounRepo: nounRepo,
 	}

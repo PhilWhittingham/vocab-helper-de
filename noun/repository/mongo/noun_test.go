@@ -3,8 +3,9 @@ package mongo
 import (
 	"testing"
 
-	"github.com/PhilWhittingham/vocab-helper-de/models"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/PhilWhittingham/vocab-helper-de/models"
 )
 
 func TestToNoun(t *testing.T) {

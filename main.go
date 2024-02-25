@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/PhilWhittingham/vocab-helper-de/server"
 	"github.com/spf13/viper"
+
+	"github.com/PhilWhittingham/vocab-helper-de/server"
 )
 
 func main() {

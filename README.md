@@ -15,6 +15,17 @@ This project utilizes tools and architectures that I have become comfortable wit
 
 Confirmed working using `Go 1.12`, older versions may work.
 
+### The .env file
+The service assumes a `.env` file is present at the root of the project. The variables which are expected to be there are as follows;
+
+```
+PORT=<port>
+
+MONGO_URI="<mongo uri>"
+MONGO_DB_NAME="<mongo db name>"
+MONGO_COLLECTION_NAME_NOUNS="<mongo collection name>"
+```
+
 ## Running Instructions
 
 Build the environment using
@@ -32,6 +43,7 @@ Run the tests using
 ## Built With
 
 * [Go 1.21](https://go.dev/)
+* [MongoDB](https://www.mongodb.com/)
 
 
 ## Inspired By

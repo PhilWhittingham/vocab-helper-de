@@ -25,6 +25,9 @@ Run the web service using
 
 ```go run .```<br />
 
+Run the tests using
+
+```go test ./...```<br />
 
 ## Built With
 

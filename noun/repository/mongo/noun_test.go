@@ -3,6 +3,7 @@ package mongo
 import (
 	"testing"
 
+	"github.com/PhilWhittingham/vocab-helper-de/models"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,4 +33,18 @@ func TestToNouns(t *testing.T) {
 	domainNouns := toNouns(dbNouns)
 
 	assert.Equal(t, len(domainNouns), 1)
+}
+
+func TestToModel(t *testing.T) {
+	domainNoun := models.Noun{
+		Article:     "das",
+		Word:        "word",
+		Translation: "translation",
+	}
+
+	dbNoun := toModel(&domainNoun)
+
+	assert.Equal(t, dbNoun.Article, domainNoun.Article)
+	assert.Equal(t, dbNoun.Word, domainNoun.Word)
+	assert.Equal(t, dbNoun.Translation, domainNoun.Translation)
 }

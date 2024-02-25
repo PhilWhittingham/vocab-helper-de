@@ -51,6 +51,25 @@ func (r NounRepository) GetNouns(ctx context.Context) ([]*models.Noun, error) {
 	return toNouns(out), nil
 }
 
+func (r NounRepository) CreateNoun(ctx context.Context, noun *models.Noun) error {
+	model := toModel(noun)
+
+	_, err := r.db.InsertOne(ctx, model)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func toModel(n *models.Noun) *Noun {
+	return &Noun{
+		Article:     n.Article,
+		Word:        n.Word,
+		Translation: n.Translation,
+	}
+}
+
 func toNoun(n *Noun) *models.Noun {
 	return &models.Noun{
 		Article:     n.Article,

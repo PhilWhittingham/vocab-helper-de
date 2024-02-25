@@ -8,4 +8,5 @@ import (
 
 type Repository interface {
 	GetNouns(ctx context.Context) ([]*models.Noun, error)
+	CreateNoun(ctx context.Context, noun *models.Noun) error
 }

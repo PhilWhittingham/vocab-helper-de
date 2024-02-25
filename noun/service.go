@@ -8,4 +8,5 @@ import (
 
 type Service interface {
 	GetNouns(ctx context.Context) ([]*models.Noun, error)
+	CreateNoun(ctx context.Context, article string, word string, translation string) error
 }

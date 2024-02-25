@@ -20,3 +20,13 @@ func NewNounService(nounRepo noun.Repository) *NounService {
 func (n NounService) GetNouns(ctx context.Context) ([]*models.Noun, error) {
 	return n.nounRepo.GetNouns(ctx)
 }
+
+func (n NounService) CreateNoun(ctx context.Context, article string, word string, translation string) error {
+	noun := &models.Noun{
+		Article:     article,
+		Word:        word,
+		Translation: translation,
+	}
+
+	return n.nounRepo.CreateNoun(ctx, noun)
+}

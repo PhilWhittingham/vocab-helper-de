@@ -9,7 +9,7 @@ import (
 )
 
 type Noun struct {
-	Article     string `json:"artical" binding:"required"`
+	Article     string `json:"article" binding:"required"`
 	Word        string `json:"word" binding:"required"`
 	Translation string `json:"translation" binding:"required"`
 }
@@ -24,12 +24,8 @@ func NewHandler(service noun.Service) *Handler {
 	}
 }
 
-var nouns = []Noun{
-	{Article: "Das", Word: "Meeting", Translation: "Meeting"},
-}
-
 func (h *Handler) Get(c *gin.Context) {
-	nouns, err := h.service.GetNouns(c)
+	nouns, err := h.service.GetNouns(c.Request.Context())
 
 	if err != nil {
 		c.AbortWithError(500, err)
@@ -47,6 +43,11 @@ func (h *Handler) Create(c *gin.Context) {
 		return
 	}
 
-	nouns = append(nouns, newNoun)
+	err := h.service.CreateNoun(c.Request.Context(), newNoun.Article, newNoun.Word, newNoun.Translation)
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
 	c.IndentedJSON(http.StatusCreated, newNoun)
 }

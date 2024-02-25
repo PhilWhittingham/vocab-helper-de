@@ -57,6 +57,9 @@ func TestPostNouns(t *testing.T) {
 			Translation: "translation",
 		}
 		jsonValue, _ := json.Marshal(newNoun)
+
+		service.On("CreateNoun", newNoun.Article, newNoun.Word, newNoun.Translation).Return(nil)
+
 		req, _ := http.NewRequest("POST", "/api/nouns", bytes.NewBuffer(jsonValue))
 
 		w := httptest.NewRecorder()

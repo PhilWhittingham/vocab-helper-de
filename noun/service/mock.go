@@ -17,3 +17,9 @@ func (m NounServiceMock) GetNouns(ctx context.Context) ([]*models.Noun, error) {
 
 	return args.Get(0).([]*models.Noun), args.Error(1)
 }
+
+func (m NounServiceMock) CreateNoun(ctx context.Context, article string, word string, translation string) error {
+	args := m.Called(article, word, translation)
+
+	return args.Error(0)
+}

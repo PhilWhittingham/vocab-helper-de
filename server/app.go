@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 
 	"github.com/PhilWhittingham/vocab-helper-de/models"
 )
@@ -29,13 +28,10 @@ func postNouns(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, newNoun)
 }
 
-func Run() {
-	viper.SetConfigFile(".env")
-	viper.ReadInConfig()
-
+func Run(port string) {
 	router := gin.Default()
 	router.GET("/nouns", getNouns)
 	router.POST("/nouns", postNouns)
 
-	router.Run("localhost:" + viper.GetString("PORT"))
+	router.Run("localhost:" + port)
 }

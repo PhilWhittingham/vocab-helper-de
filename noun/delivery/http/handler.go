@@ -29,6 +29,13 @@ var nouns = []Noun{
 }
 
 func (h *Handler) Get(c *gin.Context) {
+	nouns, err := h.service.GetNouns(c)
+
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
 	c.IndentedJSON(http.StatusOK, nouns)
 }
 

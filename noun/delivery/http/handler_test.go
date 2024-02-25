@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/PhilWhittingham/vocab-helper-de/models"
 	"github.com/PhilWhittingham/vocab-helper-de/noun/service"
 )
 
@@ -20,6 +21,17 @@ func TestGetNouns(t *testing.T) {
 
 	group := router.Group("/api")
 	RegisterHTTPEndpoints(group, s)
+
+	bms := make([]*models.Noun, 5)
+	for i := 0; i < 5; i++ {
+		bms[i] = &models.Noun{
+			Article:     "das",
+			Word:        "word",
+			Translation: "translation",
+		}
+	}
+
+	s.On("GetNouns").Return(bms, nil)
 
 	req, _ := http.NewRequest("GET", "/api/nouns", nil)
 

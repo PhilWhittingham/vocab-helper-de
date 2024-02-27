@@ -21,7 +21,7 @@ func (n NounService) GetNouns(ctx context.Context) ([]*models.Noun, error) {
 	return n.nounRepo.GetNouns(ctx)
 }
 
-func (n NounService) CreateNoun(ctx context.Context, article string, word string, translation string) error {
+func (n NounService) CreateNoun(ctx context.Context, article string, word string, translation string) (*models.Noun, error) {
 	noun := &models.Noun{
 		Article:     article,
 		Word:        word,

@@ -4,12 +4,14 @@ import (
 	"context"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/PhilWhittingham/vocab-helper-de/models"
 )
 
 type Noun struct {
+	Id          string `bson:"_id,omitempty"`
 	Article     string `bson:"article"`
 	Word        string `bson:"word"`
 	Translation string `bson:"translation"`
@@ -51,18 +53,20 @@ func (r NounRepository) GetNouns(ctx context.Context) ([]*models.Noun, error) {
 	return toNouns(out), nil
 }
 
-func (r NounRepository) CreateNoun(ctx context.Context, noun *models.Noun) error {
-	model := toModel(noun)
+func (r NounRepository) CreateNoun(ctx context.Context, noun *models.Noun) (*models.Noun, error) {
+	model := toDatabaseModel(noun)
 
-	_, err := r.db.InsertOne(ctx, model)
+	res, err := r.db.InsertOne(ctx, model)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	noun.Id = res.InsertedID.(primitive.ObjectID).Hex()
+
+	return noun, nil
 }
 
-func toModel(n *models.Noun) *Noun {
+func toDatabaseModel(n *models.Noun) *Noun {
 	return &Noun{
 		Article:     n.Article,
 		Word:        n.Word,
@@ -72,6 +76,7 @@ func toModel(n *models.Noun) *Noun {
 
 func toNoun(n *Noun) *models.Noun {
 	return &models.Noun{
+		Id:          n.Id,
 		Article:     n.Article,
 		Word:        n.Word,
 		Translation: n.Translation,

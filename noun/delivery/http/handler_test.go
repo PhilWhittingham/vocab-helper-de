@@ -51,14 +51,19 @@ func TestPostNouns(t *testing.T) {
 		group := router.Group("/api")
 		RegisterHTTPEndpoints(group, service)
 
-		newNoun := Noun{
+		newNoun := NounCreate{
 			Article:     "Das",
 			Word:        "word",
 			Translation: "translation",
 		}
 		jsonValue, _ := json.Marshal(newNoun)
 
-		service.On("CreateNoun", newNoun.Article, newNoun.Word, newNoun.Translation).Return(nil)
+		returnNoun := &models.Noun{
+			Article:     "das",
+			Word:        "word",
+			Translation: "translation",
+		}
+		service.On("CreateNoun", newNoun.Article, newNoun.Word, newNoun.Translation).Return(returnNoun, nil)
 
 		req, _ := http.NewRequest("POST", "/api/nouns", bytes.NewBuffer(jsonValue))
 
@@ -86,4 +91,34 @@ func TestPostNouns(t *testing.T) {
 		router.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
+}
+
+func TestToNoun(t *testing.T) {
+	domainNoun := models.Noun{
+		Id:          "some_id",
+		Article:     "das",
+		Word:        "word",
+		Translation: "translation",
+	}
+
+	dtoNoun := toNoun(&domainNoun)
+
+	assert.Equal(t, domainNoun.Article, dtoNoun.Article)
+	assert.Equal(t, domainNoun.Word, dtoNoun.Word)
+	assert.Equal(t, domainNoun.Translation, dtoNoun.Translation)
+}
+
+func TestToNouns(t *testing.T) {
+	domainNoun := models.Noun{
+		Id:          "some_id",
+		Article:     "das",
+		Word:        "word",
+		Translation: "translation",
+	}
+
+	domainNouns := []*models.Noun{&domainNoun}
+
+	dtoNouns := toNouns(domainNouns)
+
+	assert.Equal(t, len(dtoNouns), 1)
 }

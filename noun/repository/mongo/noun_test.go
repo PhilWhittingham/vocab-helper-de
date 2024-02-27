@@ -36,14 +36,15 @@ func TestToNouns(t *testing.T) {
 	assert.Equal(t, len(domainNouns), 1)
 }
 
-func TestToModel(t *testing.T) {
+func TestToDatabaseModel(t *testing.T) {
 	domainNoun := models.Noun{
+		Id:          "some_id",
 		Article:     "das",
 		Word:        "word",
 		Translation: "translation",
 	}
 
-	dbNoun := toModel(&domainNoun)
+	dbNoun := toDatabaseModel(&domainNoun)
 
 	assert.Equal(t, dbNoun.Article, domainNoun.Article)
 	assert.Equal(t, dbNoun.Word, domainNoun.Word)
